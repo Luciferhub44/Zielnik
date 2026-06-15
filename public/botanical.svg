@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none">
+  <!-- Main stem -->
+  <path d="M200 480 C200 480 198 320 200 200 C202 80 200 40 200 40" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.25"/>
+
+  <!-- Leaf pair 1 (bottom) -->
+  <path d="M200 400 C160 380 120 350 100 310 C140 300 180 320 200 360" fill="white" opacity="0.08"/>
+  <path d="M200 400 C240 380 280 350 300 310 C260 300 220 320 200 360" fill="white" opacity="0.08"/>
+  <path d="M200 400 C160 380 120 350 100 310" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.2"/>
+  <path d="M200 400 C240 380 280 350 300 310" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.2"/>
+
+  <!-- Leaf pair 2 -->
+  <path d="M200 320 C150 295 105 260 85 215 C130 205 175 230 200 275" fill="white" opacity="0.09"/>
+  <path d="M200 320 C250 295 295 260 315 215 C270 205 225 230 200 275" fill="white" opacity="0.09"/>
+  <path d="M200 320 C150 295 105 260 85 215" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.2"/>
+  <path d="M200 320 C250 295 295 260 315 215" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.2"/>
+
+  <!-- Leaf pair 3 -->
+  <path d="M200 230 C158 205 118 165 102 120 C145 112 184 138 200 182" fill="white" opacity="0.1"/>
+  <path d="M200 230 C242 205 282 165 298 120 C255 112 216 138 200 182" fill="white" opacity="0.1"/>
+  <path d="M200 230 C158 205 118 165 102 120" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.22"/>
+  <path d="M200 230 C242 205 282 165 298 120" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.22"/>
+
+  <!-- Top bud cluster -->
+  <path d="M200 120 C185 100 175 80 180 60 C190 55 200 65 200 80" fill="white" opacity="0.12"/>
+  <path d="M200 120 C215 100 225 80 220 60 C210 55 200 65 200 80" fill="white" opacity="0.12"/>
+  <path d="M200 120 C200 100 200 80 200 55" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.2"/>
+
+  <!-- Leaf veins pair 1 -->
+  <path d="M200 400 C170 370 140 345 110 318" stroke="white" stroke-width="0.8" opacity="0.15"/>
+  <path d="M200 400 C230 370 260 345 290 318" stroke="white" stroke-width="0.8" opacity="0.15"/>
+
+  <!-- Leaf veins pair 2 -->
+  <path d="M200 320 C166 288 132 258 96 222" stroke="white" stroke-width="0.8" opacity="0.15"/>
+  <path d="M200 320 C234 288 268 258 304 222" stroke="white" stroke-width="0.8" opacity="0.15"/>
+</svg>
