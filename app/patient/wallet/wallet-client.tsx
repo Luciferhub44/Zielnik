@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useTransition, useActionState } from 'react'
+import { useState, useEffect, useTransition, useActionState, useRef } from 'react'
+import JsBarcode from 'jsbarcode'
 import {
   ShieldCheck, Plus, Pencil, Trash2, Clock,
   CheckCircle2, XCircle, AlertCircle, Download,
@@ -109,6 +110,12 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
                   >
                     {doc.prescription_code}
                   </p>
+                </div>
+                <hr className="border-white/10" />
+                {/* Scannable Code 128 barcode — encodes PESEL + access code as P1 system expects */}
+                <div>
+                  <Lbl>Kod kreskowy (skan apteczny)</Lbl>
+                  <Barcode128 value={doc.patient_pesel + doc.prescription_code} />
                 </div>
                 {doc.invoice_url && (
                   <a
@@ -240,6 +247,29 @@ function Field({
         required={required} inputMode={inputMode} maxLength={maxLength}
         className={INPUT}
       />
+    </div>
+  )
+}
+
+function Barcode128({ value }: { value: string }) {
+  const ref = useRef<SVGSVGElement>(null)
+  useEffect(() => {
+    if (!ref.current) return
+    JsBarcode(ref.current, value, {
+      format: 'CODE128',
+      displayValue: true,
+      fontSize: 11,
+      height: 64,
+      margin: 10,
+      background: '#ffffff',
+      lineColor: '#111827',
+      font: 'monospace',
+      textMargin: 4,
+    })
+  }, [value])
+  return (
+    <div className="rounded-xl overflow-hidden mt-2">
+      <svg ref={ref} className="w-full" />
     </div>
   )
 }

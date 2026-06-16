@@ -39,6 +39,9 @@ export default function Nav() {
     return () => { document.body.style.overflow = '' }
   }, [open])
 
+  // Admin has its own sidebar layout — skip global nav (after hooks)
+  if (pathname.startsWith('/admin')) return null
+
   const glass = scrolled || !isHome
 
   return (

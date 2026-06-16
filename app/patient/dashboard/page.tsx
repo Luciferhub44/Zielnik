@@ -1,20 +1,21 @@
 import Link from 'next/link'
 import { FileText, Pill, ShieldCheck, ChevronRight, CalendarDays, Clock, PlusCircle, History } from 'lucide-react'
-import { currentUser } from '@clerk/nextjs/server'
-import { createServerClient } from '@/lib/supabase-server'
+import { auth, currentUser } from '@clerk/nextjs/server'
+import { createAdminClient } from '@/lib/supabase-server'
 import ScrollReveal from '@/app/components/scroll-reveal'
 import { daysUntil } from '@/lib/data'
 
 export default async function DashboardPage() {
-  const [user, db] = await Promise.all([currentUser(), createServerClient()])
+  const [{ userId }, user] = await Promise.all([auth(), currentUser()])
+  const db = createAdminClient()
 
   const name = user
     ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || user.emailAddresses[0]?.emailAddress
     : 'Pacjent'
 
   const [{ data: allPrescriptions }, { data: journal }] = await Promise.all([
-    db.from('prescriptions').select('*').order('valid_until', { ascending: true }),
-    db.from('journal_entries').select('*').order('entry_date', { ascending: false }).limit(10),
+    db.from('prescriptions').select('*').eq('user_id', userId ?? '').order('valid_until', { ascending: true }),
+    db.from('journal_entries').select('*').eq('user_id', userId ?? '').order('entry_date', { ascending: false }).limit(10),
   ])
 
   const rxAll     = allPrescriptions ?? []
