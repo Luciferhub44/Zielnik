@@ -26,6 +26,9 @@ export async function addPharmacy(prevState: ActionState, formData: FormData): P
       voivodeship: String(formData.get('voivodeship')).trim(),
       latitude: Number(formData.get('latitude') || 0),
       longitude: Number(formData.get('longitude') || 0),
+      phone:   String(formData.get('phone')   || '').trim() || null,
+      email:   String(formData.get('email')   || '').trim() || null,
+      website: String(formData.get('website') || '').trim() || null,
     })
     if (error) return { error: error.message }
     revalidatePath('/admin/pharmacies')
@@ -68,6 +71,50 @@ export async function addInventoryItem(prevState: ActionState, formData: FormDat
     })
     if (error) return { error: error.message }
     revalidatePath('/admin/inventory')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function updatePharmacy(id: string, prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może edytować apteki' }
+    const db = createAdminClient()
+    const name = String(formData.get('name')).trim()
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+    const { error } = await db.from('pharmacies').update({
+      name,
+      slug,
+      address:    String(formData.get('address')    || '').trim(),
+      city:       String(formData.get('city')       || '').trim(),
+      voivodeship:String(formData.get('voivodeship')|| '').trim(),
+      latitude:   Number(formData.get('latitude')   || 0),
+      longitude:  Number(formData.get('longitude')  || 0),
+      phone:      String(formData.get('phone')      || '').trim() || null,
+      email:      String(formData.get('email')      || '').trim() || null,
+      website:    String(formData.get('website')    || '').trim() || null,
+    }).eq('id', id)
+    if (error) return { error: error.message }
+    revalidatePath(`/admin/pharmacies/${id}`)
+    revalidatePath('/admin/pharmacies')
+    revalidatePath('/admin')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function deletePharmacy(id: string): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może usuwać apteki' }
+    const db = createAdminClient()
+    const { error } = await db.from('pharmacies').delete().eq('id', id)
+    if (error) return { error: error.message }
+    revalidatePath('/admin/pharmacies')
+    revalidatePath('/admin')
     return { success: true }
   } catch (e: any) {
     return { error: e.message }

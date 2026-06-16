@@ -99,7 +99,10 @@ export default function InventoryPage() {
             showAdd ? 'bg-slate-100 text-slate-600 hover:bg-slate-200' : 'bg-primary text-white hover:bg-primary-light shadow-sm shadow-primary/20'
           }`}
         >
-          {showAdd ? <><X size={15} /> Anuluj</> : <><Plus size={15} /> Dodaj pozycję</>}
+          {showAdd
+            ? <span className="flex items-center gap-2"><X size={15} /> Anuluj</span>
+            : <span className="flex items-center gap-2"><Plus size={15} /> Dodaj pozycję</span>
+          }
         </button>
       </div>
 

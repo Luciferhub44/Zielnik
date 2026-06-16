@@ -1,8 +1,10 @@
 'use client'
 
-import { useActionState, useEffect, useState } from 'react'
-import { Building2, MapPin, Plus, X, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
-import { addPharmacy } from '@/app/actions/admin'
+import { useActionState, useEffect, useState, useTransition } from 'react'
+import Link from 'next/link'
+import { Building2, MapPin, Plus, X, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
+import { addPharmacy, deletePharmacy } from '@/app/actions/admin'
 import { supabase } from '@/lib/supabase'
 
 const INPUT = [
@@ -15,11 +17,18 @@ const INPUT = [
 type Pharmacy = { id: string; name: string; address: string; city: string; voivodeship: string; created_at: string }
 
 export default function PharmaciesPage() {
+  const { user } = useUser()
+  const isAppAdmin = user?.publicMetadata?.role === 'admin'
+
   const [showForm, setShowForm] = useState(false)
   const [state, action, pending] = useActionState(addPharmacy, null)
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([])
   const [loading, setLoading] = useState(true)
   const [sortAsc, setSortAsc] = useState(true)
+  const [confirmTarget, setConfirmTarget] = useState<{ id: string; name: string } | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState('')
+  const [, startDelete] = useTransition()
 
   async function fetchPharmacies() {
     const { data } = await supabase
@@ -39,10 +48,20 @@ export default function PharmaciesPage() {
     }
   }, [state])
 
+  function handleDelete(id: string) {
+    setDeleting(id)
+    setDeleteError('')
+    setConfirmTarget(null)
+    startDelete(async () => {
+      const res = await deletePharmacy(id)
+      if (res?.error) { setDeleteError(res.error); setDeleting(null) }
+      else { setDeleting(null); fetchPharmacies() }
+    })
+  }
+
   return (
     <div className="px-4 sm:px-8 py-8 max-w-4xl mx-auto space-y-6">
 
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Zarządzanie</p>
@@ -56,11 +75,13 @@ export default function PharmaciesPage() {
               : 'bg-primary text-white hover:bg-primary-light shadow-sm shadow-primary/20'
           }`}
         >
-          {showForm ? <><X size={15} /> Anuluj</> : <><Plus size={15} /> Dodaj aptekę</>}
+          {showForm
+            ? <span className="flex items-center gap-2"><X size={15} /> Anuluj</span>
+            : <span className="flex items-center gap-2"><Plus size={15} /> Dodaj aptekę</span>
+          }
         </button>
       </div>
 
-      {/* Add form */}
       {showForm && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
@@ -108,6 +129,24 @@ export default function PharmaciesPage() {
                 <input name="longitude" type="number" step="0.000001" placeholder="18.646638" className={INPUT} />
               </div>
             </div>
+
+            <div className="border-t border-slate-100 pt-4">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Kontakt</p>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Telefon</label>
+                  <input name="phone" type="tel" placeholder="+48 123 456 789" className={INPUT} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">E-mail</label>
+                  <input name="email" type="email" placeholder="apteka@example.pl" className={INPUT} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Strona WWW</label>
+                  <input name="website" type="url" placeholder="https://apteka.pl" className={INPUT} />
+                </div>
+              </div>
+            </div>
             <div className="flex items-center justify-between pt-1">
               <p className="text-xs text-slate-400">* Pola wymagane · wymaga SUPABASE_SERVICE_ROLE_KEY</p>
               <button type="submit" disabled={pending}
@@ -125,9 +164,13 @@ export default function PharmaciesPage() {
         </div>
       )}
 
-      {/* Pharmacy table */}
+      {deleteError && (
+        <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+          <AlertCircle size={15} /> {deleteError}
+        </div>
+      )}
+
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Table header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <div className="flex items-center gap-2">
             <Building2 size={15} className="text-slate-400" />
@@ -165,7 +208,8 @@ export default function PharmaciesPage() {
         ) : (
           <div className="divide-y divide-slate-50">
             {pharmacies.map(p => (
-              <div key={p.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50/60 transition-colors group">
+              <div key={p.id} className="relative flex items-center gap-4 px-5 py-4 hover:bg-slate-50/60 transition-colors group">
+                <Link href={`/admin/pharmacies/${p.id}`} className="absolute inset-0" aria-label={p.name} />
                 <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center shrink-0">
                   <Building2 size={15} className="text-primary" />
                 </div>
@@ -179,11 +223,55 @@ export default function PharmaciesPage() {
                 <p className="hidden sm:block text-[11px] text-slate-300 font-mono shrink-0">
                   {new Date(p.created_at).toLocaleDateString('pl-PL')}
                 </p>
+                {isAppAdmin && (
+                  <button
+                    onClick={() => setConfirmTarget({ id: p.id, name: p.name })}
+                    disabled={deleting === p.id}
+                    aria-label={`Usuń ${p.name}`}
+                    className="relative z-10 shrink-0 p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-40 opacity-0 group-hover:opacity-100"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {confirmTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-5">
+            <div className="flex items-start gap-3">
+              <div className="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                <Trash2 size={18} className="text-red-600" />
+              </div>
+              <div>
+                <p className="font-bold text-slate-800 text-base">Usuń aptekę</p>
+                <p className="text-sm text-slate-500 mt-0.5">Tej operacji nie można cofnąć.</p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-700 bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 font-semibold">
+              {confirmTarget.name}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmTarget(null)}
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors min-h-[44px]"
+              >
+                Anuluj
+              </button>
+              <button
+                onClick={() => handleDelete(confirmTarget.id)}
+                disabled={deleting === confirmTarget.id}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-semibold transition-colors disabled:opacity-50 min-h-[44px]"
+              >
+                {deleting === confirmTarget.id ? 'Usuwam…' : 'Usuń aptekę'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )
