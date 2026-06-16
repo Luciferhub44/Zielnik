@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Leaf, ShieldCheck, Menu, X } from 'lucide-react'
+import { SignInButton, Show, UserButton } from '@clerk/nextjs'
 
 const LINKS = [
   { href: '/search', label: 'Szukaj preparatów' },
@@ -78,6 +79,21 @@ export default function Nav() {
               <ShieldCheck size={14} />
               Tryb Policyjny
             </Link>
+
+            <div className="ml-2 flex items-center">
+              <Show when="signed-out">
+                <SignInButton mode="modal">
+                  <button className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                    glass ? 'text-slate-600 hover:text-primary hover:bg-primary/5' : 'text-white/75 hover:text-white hover:bg-white/10'
+                  }`}>
+                    Zaloguj
+                  </button>
+                </SignInButton>
+              </Show>
+              <Show when="signed-in">
+                <UserButton  />
+              </Show>
+            </div>
           </nav>
 
           {/* Mobile burger */}
@@ -144,8 +160,8 @@ export default function Nav() {
           ))}
         </nav>
 
-        {/* Police Mode CTA */}
-        <div className="px-4 pb-8 pt-4 border-t border-border-muted shrink-0">
+        {/* Police Mode CTA + auth */}
+        <div className="px-4 pb-8 pt-4 border-t border-border-muted shrink-0 space-y-3">
           <Link
             href="/patient/wallet"
             className="flex items-center justify-center gap-2 w-full bg-primary text-white px-4 py-3.5 rounded-xl text-sm font-semibold hover:bg-primary-light transition-colors min-h-[44px]"
@@ -153,6 +169,19 @@ export default function Nav() {
             <ShieldCheck size={16} />
             Tryb Policyjny
           </Link>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="flex items-center justify-center w-full border border-border-muted text-slate-600 px-4 py-3 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors min-h-[44px]">
+                Zaloguj się
+              </button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <div className="flex items-center gap-3 px-1">
+              <UserButton  />
+              <span className="text-sm text-slate-500">Twoje konto</span>
+            </div>
+          </Show>
         </div>
       </div>
     </>
