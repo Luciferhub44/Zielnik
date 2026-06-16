@@ -83,13 +83,14 @@ export default async function WalletPage() {
           </div>
         )}
 
-        <div className="bg-white/5 rounded-2xl p-5 border border-white/8 space-y-2">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+        <details className="bg-white/5 rounded-2xl border border-white/8 group">
+          <summary className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-slate-400 cursor-pointer p-5 select-none list-none">
             <AlertCircle size={12} />
             Podstawa prawna
-          </div>
-          <p className="text-xs text-slate-300 leading-relaxed">{LEGAL}</p>
-        </div>
+            <span className="ml-auto text-slate-600 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <p className="text-xs text-slate-300 leading-relaxed px-5 pb-5">{LEGAL}</p>
+        </details>
 
       </div>
     </div>

@@ -31,7 +31,10 @@
       "mcp__supabase__get_advisors",
       "Bash(git rm *)",
       "Bash(git add *)",
-      "Bash(mkdir -p /Users/obsidian/Documents/Zielnik/app/sign-in/\"[[...sign-in]]\" /Users/obsidian/Documents/Zielnik/app/sign-up/\"[[...sign-up]]\")"
+      "Bash(mkdir -p /Users/obsidian/Documents/Zielnik/app/sign-in/\"[[...sign-in]]\" /Users/obsidian/Documents/Zielnik/app/sign-up/\"[[...sign-up]]\")",
+      "Bash(export CLAUDE_CODE_TMPDIR=\"$HOME/tmp-claude\")",
+      "Bash(mkdir -p /Users/obsidian/tmp-claude)",
+      "Bash(echo \"OK\")"
     ]
   },
   "enabledMcpjsonServers": [
