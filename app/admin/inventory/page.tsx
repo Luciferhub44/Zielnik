@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState, useTransition, useActionState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   Package, AlertTriangle, CheckCircle2, AlertCircle,
   Plus, X, Minus, ChevronDown, Search,
@@ -48,7 +47,6 @@ export default function InventoryPage() {
   const [filter,     setFilter]     = useState('all')
   const [search,     setSearch]     = useState('')
   const [showAdd,    setShowAdd]    = useState(false)
-  const router = useRouter()
 
   const [addState, addAction, addPending] = useActionState(addInventoryItem, null)
 

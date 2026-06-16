@@ -3,8 +3,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase-server'
-
-type ActionState = { success?: boolean; error?: string } | null
+import type { ActionState } from './types'
 
 export async function upsertDocument(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const { userId } = await auth()

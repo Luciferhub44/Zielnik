@@ -3,8 +3,7 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase-server'
-
-type ActionState = { success?: boolean; error?: string } | null
+import type { ActionState } from './types'
 
 async function requireAdmin() {
   const user = await currentUser()

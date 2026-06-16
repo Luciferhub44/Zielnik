@@ -1,7 +1,6 @@
 'use client'
 
 import { useActionState, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Building2, MapPin, Plus, X, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { addPharmacy } from '@/app/actions/admin'
 import { supabase } from '@/lib/supabase'
@@ -21,7 +20,6 @@ export default function PharmaciesPage() {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([])
   const [loading, setLoading] = useState(true)
   const [sortAsc, setSortAsc] = useState(true)
-  const router = useRouter()
 
   async function fetchPharmacies() {
     const { data } = await supabase
