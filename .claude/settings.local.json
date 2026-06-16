@@ -34,7 +34,9 @@
       "Bash(mkdir -p /Users/obsidian/Documents/Zielnik/app/sign-in/\"[[...sign-in]]\" /Users/obsidian/Documents/Zielnik/app/sign-up/\"[[...sign-up]]\")",
       "Bash(export CLAUDE_CODE_TMPDIR=\"$HOME/tmp-claude\")",
       "Bash(mkdir -p /Users/obsidian/tmp-claude)",
-      "Bash(echo \"OK\")"
+      "Bash(echo \"OK\")",
+      "Bash(grep -v \"^$\")",
+      "mcp__Claude_Preview__preview_start"
     ]
   },
   "enabledMcpjsonServers": [
