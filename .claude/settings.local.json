@@ -18,7 +18,14 @@
       "Bash(curl -sL \"https://d8j0ntlcm91z4.cloudfront.net/user_3EzDyKKIw4TuqOzjeaWxroz2pfU/hf_20260615_131038_5d1187b2-7dfb-4d92-a26d-4f6b58afe5a1.png\" -o /Users/obsidian/Documents/Zielnik/public/hero-bg.png)",
       "Bash(curl -sL \"https://d8j0ntlcm91z4.cloudfront.net/user_3EzDyKKIw4TuqOzjeaWxroz2pfU/hf_20260615_131129_ec4e3124-d908-4f9c-a4bc-3a089b03abb7.png\" -o /Users/obsidian/Documents/Zielnik/public/strain-macro.png)",
       "Bash(curl -sL \"https://d8j0ntlcm91z4.cloudfront.net/user_3EzDyKKIw4TuqOzjeaWxroz2pfU/hf_20260615_131251_1478b08b-cf6f-4936-881f-ddc16b5a83c8.png\" -o /Users/obsidian/Documents/Zielnik/public/pharmacy-interior.png)",
-      "mcp__magic__21st_magic_component_refiner"
+      "mcp__magic__21st_magic_component_refiner",
+      "Bash(brew install *)",
+      "Bash(find /usr/local/bin /opt/homebrew/bin ~/.local/bin -name \"gh\" 2>/dev/null | head -3)",
+      "Bash(git checkout *)",
+      "Bash(git push *)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }
