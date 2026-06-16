@@ -4,17 +4,18 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Leaf, ShieldCheck, Menu, X } from 'lucide-react'
-import { SignInButton, Show, UserButton } from '@clerk/nextjs'
+import { SignInButton, Show, UserButton, useUser } from '@clerk/nextjs'
 
-const LINKS = [
-  { href: '/search', label: 'Szukaj preparatów' },
-  { href: '/patient/dashboard', label: 'Panel Pacjenta' },
-]
+const PUBLIC_LINKS = [{ href: '/search', label: 'Szukaj preparatów' }]
+const PATIENT_LINKS = [{ href: '/patient/dashboard', label: 'Panel Pacjenta' }]
 
 export default function Nav() {
   const pathname = usePathname()
+  const { isSignedIn } = useUser()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+
+  const LINKS = isSignedIn ? [...PUBLIC_LINKS, ...PATIENT_LINKS] : PUBLIC_LINKS
 
   const isHome = pathname === '/'
 

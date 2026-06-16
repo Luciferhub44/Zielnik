@@ -1,30 +1,34 @@
 import Link from 'next/link'
-import { FileText, Pill, ShieldCheck, ChevronRight, CalendarDays, Clock } from 'lucide-react'
+import { FileText, Pill, ShieldCheck, ChevronRight, CalendarDays, Clock, PlusCircle } from 'lucide-react'
+import { currentUser } from '@clerk/nextjs/server'
+import { createServerClient } from '@/lib/supabase-server'
 import ScrollReveal from '@/app/components/scroll-reveal'
 import { daysUntil } from '@/lib/data'
 
-const PATIENT = { name: 'Jan Kowalski', id: 'PAC-2024-00831' }
+export default async function DashboardPage() {
+  const [user, db] = await Promise.all([currentUser(), createServerClient()])
 
-const PRESCRIPTIONS = [
-  { id: 'Rx-2024-001', strain: 'Aurora 22/1',          brand: 'Aurora Cannabis', dose: '0,5 g · 3× dziennie', valid: '2026-12-31', refillsLeft: 2 },
-  { id: 'Rx-2024-002', strain: 'Spectrum Orange 10/10', brand: 'Canopy Growth',   dose: '0,3 g · 2× dziennie', valid: '2026-09-15', refillsLeft: 0 },
-]
+  const name = user
+    ? `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || user.emailAddresses[0]?.emailAddress
+    : 'Pacjent'
 
-const JOURNAL = [
-  { date: '2026-06-14', note: 'Dobre działanie przeciwbólowe, lepsza jakość snu.',  rating: 4 },
-  { date: '2026-06-12', note: 'Łagodne działanie. Brak efektów ubocznych.',         rating: 5 },
-  { date: '2026-06-10', note: 'Zwiększona dawka — skonsultować z lekarzem.',        rating: 3 },
-]
+  const [{ data: prescriptions }, { data: journal }] = await Promise.all([
+    db.from('prescriptions').select('*').order('valid_until', { ascending: true }),
+    db.from('journal_entries').select('*').order('entry_date', { ascending: false }).limit(10),
+  ])
 
-export default function DashboardPage() {
+  const rxList = prescriptions ?? []
+  const journalList = journal ?? []
+  const soonestExpiry = rxList.length ? daysUntil(rxList[0].valid_until) : null
+
   return (
     <div className="min-h-dvh bg-bg-medical pt-14">
 
       <div className="bg-gradient-to-br from-primary to-primary-light text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <p className="text-xs font-medium text-white/50 uppercase tracking-widest mb-1">Panel Pacjenta</p>
-          <h1 className="text-2xl sm:text-3xl font-bold">{PATIENT.name}</h1>
-          <p className="text-sm text-white/60 mt-0.5">ID: {PATIENT.id}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">{name}</h1>
+          <p className="text-xs text-white/40 mt-0.5 font-mono">{user?.id}</p>
           <Link
             href="/patient/wallet"
             className="mt-5 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors min-h-[44px]"
@@ -38,12 +42,13 @@ export default function DashboardPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
+        {/* Summary */}
         <ScrollReveal>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
-              { label: 'Aktywne recepty',   value: PRESCRIPTIONS.length,                    icon: FileText },
-              { label: 'Wpisy w dzienniku', value: JOURNAL.length,                          icon: CalendarDays },
-              { label: 'Wygasa za (dni)',   value: daysUntil(PRESCRIPTIONS[0].valid),       icon: Clock },
+              { label: 'Aktywne recepty',   value: rxList.length,           icon: FileText },
+              { label: 'Wpisy w dzienniku', value: journalList.length,      icon: CalendarDays },
+              { label: 'Wygasa za (dni)',   value: soonestExpiry ?? '—',    icon: Clock },
             ].map(({ label, value, icon: Icon }) => (
               <div key={label} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5 space-y-2">
                 <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center">
@@ -56,77 +61,96 @@ export default function DashboardPage() {
           </div>
         </ScrollReveal>
 
+        {/* Prescriptions */}
         <ScrollReveal>
           <section className="space-y-4">
             <h2 className="text-base font-semibold text-text-main">Aktywne recepty</h2>
-            <ul className="space-y-3">
-              {PRESCRIPTIONS.map((rx) => {
-                const days = daysUntil(rx.valid)
-                const expirySoon = days < 30
-                return (
-                  <li key={rx.id} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5">
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center shrink-0 mt-0.5">
-                        <Pill size={18} className="text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-start justify-between gap-2 flex-wrap">
-                          <div>
-                            <p className="font-semibold text-text-main">{rx.strain}</p>
-                            <p className="text-xs text-slate-400">{rx.brand} · {rx.dose}</p>
+
+            {rxList.length === 0 ? (
+              <div className="bg-surface rounded-2xl border border-dashed border-border-muted p-8 text-center space-y-2">
+                <Pill size={24} className="text-slate-300 mx-auto" />
+                <p className="text-sm font-medium text-slate-500">Brak aktywnych recept</p>
+                <p className="text-xs text-slate-400">Recepty pojawią się tu po dodaniu przez lekarza.</p>
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {rxList.map((rx) => {
+                  const days = daysUntil(rx.valid_until)
+                  const expirySoon = days < 30
+                  return (
+                    <li key={rx.id} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5">
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-primary/8 flex items-center justify-center shrink-0 mt-0.5">
+                          <Pill size={18} className="text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex items-start justify-between gap-2 flex-wrap">
+                            <div>
+                              <p className="font-semibold text-text-main">{rx.strain_name}</p>
+                              <p className="text-xs text-slate-400">{rx.brand} · {rx.dose}</p>
+                            </div>
+                            <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${
+                              rx.refills_left > 0
+                                ? 'bg-status-success/10 text-status-success'
+                                : 'bg-status-error/10 text-status-error'
+                            }`}>
+                              {rx.refills_left > 0 ? `${rx.refills_left} refundacje` : 'Brak refundacji'}
+                            </span>
                           </div>
-                          <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${
-                            rx.refillsLeft > 0
-                              ? 'bg-status-success/10 text-status-success'
-                              : 'bg-status-error/10 text-status-error'
-                          }`}>
-                            {rx.refillsLeft > 0 ? `${rx.refillsLeft} refundacje` : 'Brak refundacji'}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3 pt-1">
-                          <span className={`text-xs flex items-center gap-1 ${expirySoon ? 'text-accent font-medium' : 'text-slate-400'}`}>
-                            <Clock size={11} />
-                            Ważna do {new Date(rx.valid).toLocaleDateString('pl-PL')}
-                            {expirySoon && ` · ${days} dni`}
-                          </span>
-                          <span className="text-xs text-slate-300">{rx.id}</span>
+                          <div className="flex items-center gap-3 pt-1">
+                            <span className={`text-xs flex items-center gap-1 ${expirySoon ? 'text-accent font-medium' : 'text-slate-400'}`}>
+                              <Clock size={11} />
+                              Ważna do {new Date(rx.valid_until).toLocaleDateString('pl-PL')}
+                              {expirySoon && ` · ${days} dni`}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
           </section>
         </ScrollReveal>
 
+        {/* Journal */}
         <ScrollReveal>
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-text-main">Dziennik terapii</h2>
-              <span className="text-xs text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Faza 1 — tylko odczyt</span>
+              <span className="text-xs text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Faza 2 — wkrótce dodawanie</span>
             </div>
-            <ul className="space-y-3">
-              {JOURNAL.map((entry) => (
-                <li key={entry.date} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5 space-y-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-medium text-slate-400">
-                      {new Date(entry.date).toLocaleDateString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short' })}
-                    </span>
-                    <div className="flex gap-1" aria-label={`Ocena: ${entry.rating} z 5`}>
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <span key={i} className={`w-2 h-2 rounded-full ${i < entry.rating ? 'bg-primary-light' : 'bg-slate-200'}`} aria-hidden />
-                      ))}
+
+            {journalList.length === 0 ? (
+              <div className="bg-surface rounded-2xl border border-dashed border-border-muted p-8 text-center space-y-2">
+                <FileText size={24} className="text-slate-300 mx-auto" />
+                <p className="text-sm font-medium text-slate-500">Brak wpisów</p>
+                <p className="text-xs text-slate-400">Twoje wpisy o samopoczuciu pojawią się tutaj.</p>
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {journalList.map((entry) => (
+                  <li key={entry.id} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-medium text-slate-400">
+                        {new Date(entry.entry_date).toLocaleDateString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short' })}
+                      </span>
+                      <div className="flex gap-1" aria-label={`Ocena: ${entry.rating} z 5`}>
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <span key={i} className={`w-2 h-2 rounded-full ${i < entry.rating ? 'bg-primary-light' : 'bg-slate-200'}`} aria-hidden />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm text-text-main leading-relaxed">{entry.note}</p>
-                </li>
-              ))}
-            </ul>
-            <div className="bg-slate-50 rounded-2xl border border-dashed border-border-muted p-6 text-center space-y-2">
-              <FileText size={24} className="text-slate-300 mx-auto" />
-              <p className="text-sm font-medium text-slate-500">Dodawanie wpisów dostępne w Fazie 2</p>
-              <p className="text-xs text-slate-400">Integracja z bazą danych Supabase — już wkrótce.</p>
+                    <p className="text-sm text-text-main leading-relaxed">{entry.note}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div className="bg-slate-50 rounded-2xl border border-dashed border-border-muted p-5 flex items-center gap-3">
+              <PlusCircle size={20} className="text-slate-300 shrink-0" />
+              <p className="text-sm text-slate-400">Dodawanie wpisów dostępne w Fazie 2 — integracja Supabase gotowa.</p>
             </div>
           </section>
         </ScrollReveal>

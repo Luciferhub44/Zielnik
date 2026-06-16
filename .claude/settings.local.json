@@ -30,7 +30,8 @@
       "mcp__supabase__generate_typescript_types",
       "mcp__supabase__get_advisors",
       "Bash(git rm *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(mkdir -p /Users/obsidian/Documents/Zielnik/app/sign-in/\"[[...sign-in]]\" /Users/obsidian/Documents/Zielnik/app/sign-up/\"[[...sign-up]]\")"
     ]
   },
   "enabledMcpjsonServers": [
