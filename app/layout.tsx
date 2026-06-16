@@ -12,7 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="pl">
-        <body className="bg-bg-medical text-text-main min-h-dvh">
+        <body className="bg-bg-medical text-text-main min-h-dvh" suppressHydrationWarning>
           <Nav />
           <main className="min-h-dvh">{children}</main>
         </body>
