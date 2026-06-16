@@ -51,42 +51,37 @@ function Counter({ value, suffix, label, icon: Icon }: Stat) {
 
   return (
     <div ref={ref} className="px-3 sm:px-8 text-center first:pl-0 last:pr-0 space-y-3">
-      {/* Icon */}
       <div className={`
         w-10 h-10 rounded-xl mx-auto flex items-center justify-center
         transition-all duration-500
-        ${active ? 'bg-primary/10 scale-100' : 'bg-slate-100 scale-90'}
+        ${active ? 'bg-white/10 scale-100' : 'bg-white/5 scale-90'}
       `}>
-        <Icon size={20} className={`transition-colors duration-500 ${active ? 'text-primary' : 'text-slate-300'}`} />
+        <Icon size={20} className={`transition-colors duration-500 ${active ? 'text-green-400' : 'text-white/20'}`} />
       </div>
 
-      {/* Number */}
       <div className="space-y-1">
-        <p className="text-2xl sm:text-3xl font-black text-primary tabular-nums leading-none">
+        <p className="text-2xl sm:text-3xl font-black text-white tabular-nums leading-none">
           {display}{suffix}
         </p>
-        {/* Animated accent bar */}
-        <div className="h-0.5 rounded-full bg-slate-100 mx-auto max-w-[40px] overflow-hidden">
+        <div className="h-0.5 rounded-full bg-white/8 mx-auto max-w-[40px] overflow-hidden">
           <div
-            className="h-full bg-primary-light rounded-full transition-all duration-700 ease-out"
+            className="h-full bg-green-400/60 rounded-full transition-all duration-700 ease-out"
             style={{ width: active ? '100%' : '0%' }}
           />
         </div>
       </div>
 
-      <p className="text-[11px] sm:text-sm text-slate-500 leading-tight">{label}</p>
+      <p className="text-[11px] sm:text-sm text-white/35 leading-tight">{label}</p>
     </div>
   )
 }
 
 export default function StatsCounter() {
   return (
-    <section id="features" className="bg-surface border-b border-border-muted">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-3 divide-x divide-border-muted">
-        {STATS.map((stat) => (
-          <Counter key={stat.label} {...stat} />
-        ))}
-      </div>
-    </section>
+    <div className="max-w-6xl mx-auto px-6 sm:px-8 py-10 grid grid-cols-3 divide-x divide-white/8">
+      {STATS.map((stat) => (
+        <Counter key={stat.label} {...stat} />
+      ))}
+    </div>
   )
 }
