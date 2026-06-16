@@ -30,7 +30,7 @@ export default function ParallaxHero() {
 
   return (
     <section className="relative h-[92dvh] overflow-hidden flex items-center" aria-label="Hero">
-      {/* Parallax background — Higgsfield Seedream V5 Lite generated */}
+      {/* Parallax background */}
       <div ref={bgRef} className="absolute inset-0 will-change-transform scale-110" aria-hidden="true">
         <Image
           src="/hero-bg.png"

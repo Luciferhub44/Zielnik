@@ -10,7 +10,7 @@ const PRESCRIPTIONS = [
     strain: 'Aurora 22/1',
     brand: 'Aurora Cannabis',
     dose: '0,5 g · 3× dziennie',
-    valid: '2025-12-31',
+    valid: '2026-12-31',
     refillsLeft: 2,
   },
   {
@@ -18,15 +18,15 @@ const PRESCRIPTIONS = [
     strain: 'Spectrum Orange 10/10',
     brand: 'Canopy Growth',
     dose: '0,3 g · 2× dziennie',
-    valid: '2025-09-15',
+    valid: '2026-09-15',
     refillsLeft: 0,
   },
 ]
 
 const JOURNAL: { date: string; note: string; rating: number }[] = [
-  { date: '2025-06-14', note: 'Dobre działanie przeciwbólowe, lepsza jakość snu.', rating: 4 },
-  { date: '2025-06-12', note: 'Łagodne działanie. Brak efektów ubocznych.', rating: 5 },
-  { date: '2025-06-10', note: 'Zwiększona dawka — skonsultować z lekarzem.', rating: 3 },
+  { date: '2026-06-14', note: 'Dobre działanie przeciwbólowe, lepsza jakość snu.', rating: 4 },
+  { date: '2026-06-12', note: 'Łagodne działanie. Brak efektów ubocznych.', rating: 5 },
+  { date: '2026-06-10', note: 'Zwiększona dawka — skonsultować z lekarzem.', rating: 3 },
 ]
 
 function RatingDots({ n }: { n: number }) {

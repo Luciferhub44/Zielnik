@@ -5,7 +5,7 @@ const PATIENT = {
   pesel: '••••••••••• ',
   code: '7842',
   pharmacy: 'Apteka Centrum, Warszawa',
-  invoiceRef: 'FV/2024/08/00123',
+  invoiceRef: 'FV/2026/08/00123',
 }
 
 const LEGAL =

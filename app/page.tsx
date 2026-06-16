@@ -163,7 +163,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-border-muted">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>© 2025 Zielnik. Platforma informacyjna dla pacjentów medycznych.</p>
+          <p>© 2026 Zielnik. Platforma informacyjna dla pacjentów medycznych.</p>
           <p>Informacje mają charakter wyłącznie informacyjny. Nie są poradą medyczną.</p>
         </div>
       </footer>

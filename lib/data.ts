@@ -29,7 +29,7 @@ export const strains: Strain[] = [
     voivodeship: 'mazowieckie',
     address: 'ul. Marszałkowska 45',
     pricePerGram: 58,
-    expiryDate: '2025-07-10',
+    expiryDate: '2026-07-10',
     inStock: true,
   },
   {
@@ -44,7 +44,7 @@ export const strains: Strain[] = [
     voivodeship: 'małopolskie',
     address: 'ul. Floriańska 12',
     pricePerGram: 54,
-    expiryDate: '2025-09-01',
+    expiryDate: '2026-09-01',
     inStock: true,
   },
   {
@@ -59,7 +59,7 @@ export const strains: Strain[] = [
     voivodeship: 'pomorskie',
     address: 'ul. Długa 88',
     pricePerGram: 49,
-    expiryDate: '2025-07-20',
+    expiryDate: '2026-07-20',
     inStock: true,
   },
   {
@@ -74,7 +74,7 @@ export const strains: Strain[] = [
     voivodeship: 'mazowieckie',
     address: 'ul. Marszałkowska 45',
     pricePerGram: 62,
-    expiryDate: '2025-10-15',
+    expiryDate: '2026-10-15',
     inStock: false,
   },
   {
@@ -89,7 +89,7 @@ export const strains: Strain[] = [
     voivodeship: 'małopolskie',
     address: 'ul. Floriańska 12',
     pricePerGram: 46,
-    expiryDate: '2025-12-01',
+    expiryDate: '2026-12-01',
     inStock: true,
   },
 ]

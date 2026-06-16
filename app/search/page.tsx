@@ -15,7 +15,7 @@ export default function SearchPage() {
   return (
     <div className="min-h-dvh bg-bg-medical pt-14">
 
-      {/* Page hero — Higgsfield pharmacy image */}
+      {/* Page hero */}
       <div className="relative h-36 sm:h-48 overflow-hidden">
         <Image
           src="/pharmacy-interior.png"
