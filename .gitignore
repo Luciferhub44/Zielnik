@@ -21,6 +21,11 @@ out/
 .env.local
 .env.*.local
 
+# Claude Code / Agent skills
+.claude/
+.agents/
+skills-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
