@@ -44,7 +44,6 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
     <div className="min-h-dvh bg-gradient-to-b from-[#020d07] to-[#0a1f12] text-white flex flex-col pt-14">
       <div className="flex-1 flex flex-col max-w-sm mx-auto w-full px-5 py-6 gap-4">
 
-        {/* Header */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
             <ShieldCheck size={22} className="text-green-400" />
@@ -55,7 +54,6 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 bg-white/5 rounded-xl p-1">
           {[
             { id: 'police'  as const, label: 'Tryb Policyjny' },
@@ -73,7 +71,6 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
           ))}
         </div>
 
-        {/* ── Police Mode ── */}
         {tab === 'police' && (
           <>
             {editDoc ? (
@@ -112,7 +109,6 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
                   </p>
                 </div>
                 <hr className="border-white/10" />
-                {/* Scannable Code 128 barcode — encodes PESEL + access code as P1 system expects */}
                 <div>
                   <Lbl>Kod kreskowy (skan apteczny)</Lbl>
                   <Barcode128 value={doc.patient_pesel + doc.prescription_code} />
@@ -144,7 +140,6 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
           </>
         )}
 
-        {/* ── History Tab ── */}
         {tab === 'history' && (
           <>
             {active.length > 0 && (
@@ -214,8 +209,6 @@ export default function WalletClient({ doc, prescriptions }: { doc: Doc; prescri
     </div>
   )
 }
-
-/* ── Small helpers ── */
 
 function Lbl({ children }: { children: React.ReactNode }) {
   return <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest mb-0.5">{children}</p>

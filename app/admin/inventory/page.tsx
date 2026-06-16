@@ -81,7 +81,6 @@ export default function InventoryPage() {
   return (
     <div className="px-4 sm:px-8 py-8 max-w-6xl mx-auto space-y-6">
 
-      {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Zarządzanie</p>
@@ -104,7 +103,6 @@ export default function InventoryPage() {
         </button>
       </div>
 
-      {/* Add inventory form */}
       {showAdd && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
@@ -166,7 +164,6 @@ export default function InventoryPage() {
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[160px] max-w-xs">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
@@ -191,9 +188,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      {/* Inventory table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        {/* Column headers — desktop only */}
         <div className="hidden sm:grid sm:grid-cols-[1fr_180px_80px_130px_110px] gap-0 px-5 py-3 bg-slate-50 border-b border-slate-200">
           {['Szczep / Apteka', 'Apteka', 'PLN/g', 'Stan magazynowy', 'Ważność'].map(h => (
             <p key={h} className="text-[11px] font-bold uppercase tracking-widest text-slate-400">{h}</p>
@@ -252,35 +247,28 @@ function InventoryRow({ item }: { item: Item }) {
 
   return (
     <div className="group hover:bg-slate-50/60 transition-colors">
-      {/* Desktop row */}
       <div className="hidden sm:grid sm:grid-cols-[1fr_180px_80px_130px_110px] gap-0 items-center px-5 py-3.5">
-        {/* Strain */}
         <div className="min-w-0">
           <p className="text-sm font-semibold text-slate-800 truncate">{item.strains?.name ?? '—'}</p>
           <p className="text-xs text-slate-400 mt-0.5">
             THC {item.strains?.thc_pct ?? 0}% · CBD {item.strains?.cbd_pct ?? 0}%
           </p>
         </div>
-        {/* Pharmacy */}
         <div className="min-w-0 pr-4">
           <p className="text-sm text-slate-700 truncate">{item.pharmacies?.name ?? '—'}</p>
           <p className="text-xs text-slate-400">{item.pharmacies?.city}</p>
         </div>
-        {/* Price */}
         <p className="text-sm font-semibold text-slate-700 tabular-nums">{item.price_per_gram}<span className="text-slate-400 font-normal text-xs"> PLN</span></p>
-        {/* Stock editor */}
         <StockEditor stock={stock} saving={saving} saved={saved} error={error}
           onDecrement={() => applyStock(Math.max(0, stock - 1))}
           onIncrement={() => applyStock(stock + 1)}
           onInput={v    => applyStock(Math.max(0, v))}
         />
-        {/* Expiry */}
         <span className={`inline-flex text-xs font-semibold px-2.5 py-1 rounded-full border ${exp.cls} tabular-nums`}>
           {exp.text}
         </span>
       </div>
 
-      {/* Mobile card */}
       <div className="sm:hidden px-5 py-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
@@ -347,7 +335,6 @@ function StockEditor({
         {!saved && !saving && stock === 0 && <AlertTriangle size={13} className="text-red-400" />}
       </div>
 
-      {/* Desktop error inline */}
       {error && (
         <span className="hidden sm:flex items-center gap-1 text-xs text-red-600 ml-1">
           <AlertCircle size={11} />{error.slice(0, 40)}

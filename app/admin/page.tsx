@@ -50,7 +50,6 @@ export default async function AdminPage() {
   return (
     <div className="px-4 sm:px-8 py-8 max-w-5xl mx-auto space-y-8">
 
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Panel administracyjny</p>
@@ -64,7 +63,6 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {STATS.map(({ label, value, icon: Icon, href, color, border, warn }) => {
           const card = (
@@ -91,7 +89,6 @@ export default async function AdminPage() {
 
       <div className="grid lg:grid-cols-2 gap-6">
 
-        {/* Low stock alerts */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -143,7 +140,6 @@ export default async function AdminPage() {
           )}
         </section>
 
-        {/* Recent pharmacies */}
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

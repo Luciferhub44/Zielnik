@@ -41,10 +41,9 @@ export async function updateInventoryStock(id: string, stockLevel: number): Prom
     const { role, user } = await requireAdmin()
     const db = createAdminClient()
     let query = db.from('inventory').update({ stock_level: stockLevel, updated_at: new Date().toISOString() }).eq('id', id)
-    // pharmacy_admin can only touch their own pharmacy's inventory
     if (role === 'pharmacy_admin') {
       const pharmacyId = user?.publicMetadata?.pharmacy_id as string | undefined
-      if (pharmacyId) query = db.from('inventory').update({ stock_level: stockLevel, updated_at: new Date().toISOString() }).eq('id', id).eq('pharmacy_id', pharmacyId)
+      if (pharmacyId) query = query.eq('pharmacy_id', pharmacyId)
     }
     const { error } = await query
     if (error) return { error: error.message }

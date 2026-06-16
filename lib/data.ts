@@ -19,7 +19,6 @@ export type Strain = {
   inStock: boolean
 }
 
-// ponytail: mock fallback until Supabase schema is live
 const MOCK_STRAINS: Strain[] = [
   { id: '1', name: 'Aurora 22/1',          brand: 'Aurora Cannabis', type: 'Sativa',  thc: 22, cbd: 1,  pharmacy: 'Apteka Centrum',  city: 'Warszawa', voivodeship: 'mazowieckie', address: 'ul. Marszałkowska 45', pricePerGram: 58, expiryDate: '2026-07-10', inStock: true },
   { id: '2', name: 'Canopy Growth 20/1',   brand: 'Canopy Growth',   type: 'Indica',  thc: 20, cbd: 1,  pharmacy: 'Apteka Pod Różą', city: 'Kraków',   voivodeship: 'małopolskie',  address: 'ul. Floriańska 12',   pricePerGram: 54, expiryDate: '2026-09-01', inStock: true },
@@ -59,7 +58,6 @@ export function daysUntil(dateStr: string): number {
 const LINEAGE: Record<string, Strain['type']> = {
   'Sativa-dominant': 'Sativa',
   'Indica-dominant': 'Indica',
-  'Balanced': 'Hybrid',
 }
 
 export async function fetchStrains(client: SupabaseClient<Database>): Promise<Strain[]> {

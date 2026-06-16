@@ -39,7 +39,6 @@ export default function Nav() {
     return () => { document.body.style.overflow = '' }
   }, [open])
 
-  // Admin has its own sidebar layout — skip global nav (after hooks)
   if (pathname.startsWith('/admin')) return null
 
   const glass = scrolled || !isHome
@@ -58,7 +57,6 @@ export default function Nav() {
             Zielnik
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden sm:flex items-center gap-1">
             {LINKS.map(({ href, label }) => (
               <Link key={href} href={href}
@@ -109,7 +107,6 @@ export default function Nav() {
             </div>
           </nav>
 
-          {/* Mobile burger */}
           <button onClick={() => setOpen(true)} aria-label="Otwórz menu" aria-expanded={open}
             className={`sm:hidden p-2 -mr-1.5 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors ${
               glass ? 'text-text-main hover:bg-slate-100' : 'text-white hover:bg-white/10'
@@ -119,13 +116,11 @@ export default function Nav() {
         </div>
       </header>
 
-      {/* Mobile overlay */}
       <div onClick={() => setOpen(false)} aria-hidden
         className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-sm sm:hidden transition-opacity duration-300 ${
           open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`} />
 
-      {/* Mobile drawer */}
       <div role="dialog" aria-modal="true" aria-label="Menu nawigacji"
         className={`fixed top-0 right-0 h-full w-[280px] bg-surface z-50 sm:hidden shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'

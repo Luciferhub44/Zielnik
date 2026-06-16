@@ -15,9 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-dvh bg-[#F8FAF9] flex">
 
-      {/* ── Desktop Sidebar ── */}
       <aside className="hidden sm:flex flex-col fixed inset-y-0 left-0 w-56 bg-[#0b1f13] z-40 shadow-xl">
-        {/* Logo */}
         <div className="px-5 pt-6 pb-5 border-b border-white/8 shrink-0">
           <Link href="/admin" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-green-500/15 flex items-center justify-center">
@@ -34,7 +32,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
         <SidebarNav role={role} />
 
-        {/* Sidebar footer */}
         <div className="px-4 py-4 border-t border-white/8 shrink-0 space-y-2">
           <p className="text-[11px] text-white/25 truncate">{user?.emailAddresses[0]?.emailAddress}</p>
           <Link
@@ -47,7 +44,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </aside>
 
-      {/* ── Mobile Top Bar ── */}
       <header className="sm:hidden fixed top-0 inset-x-0 z-50 bg-[#0b1f13] h-14 flex items-center justify-between px-4 shadow-lg shrink-0">
         <Link href="/admin" className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-green-500/15 flex items-center justify-center">
@@ -61,7 +57,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </Link>
       </header>
 
-      {/* ── Main content ── */}
       <div className="flex-1 sm:pl-56 flex flex-col min-h-dvh">
         {!hasServiceKey && (
           <div className="bg-amber-50 border-b border-amber-200 px-4 sm:px-6 py-2.5 flex items-center gap-2.5 shrink-0">
@@ -81,7 +76,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </main>
       </div>
 
-      {/* ── Mobile Bottom Nav ── */}
       <BottomNav role={role} />
     </div>
   )

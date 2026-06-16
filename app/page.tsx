@@ -126,7 +126,6 @@ export default function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                 </div>
-                {/* Floating stat badge */}
                 <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl shadow-black/8 px-5 py-4 border border-slate-100">
                   <p className="text-2xl font-black text-text-main tabular-nums">120+</p>
                   <p className="text-xs text-slate-400 mt-0.5 font-medium">preparatów w bazie</p>
