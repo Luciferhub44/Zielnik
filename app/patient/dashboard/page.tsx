@@ -1,65 +1,30 @@
 import Link from 'next/link'
 import { FileText, Pill, ShieldCheck, ChevronRight, CalendarDays, Clock } from 'lucide-react'
 import ScrollReveal from '@/app/components/scroll-reveal'
+import { daysUntil } from '@/lib/data'
 
 const PATIENT = { name: 'Jan Kowalski', id: 'PAC-2024-00831' }
 
 const PRESCRIPTIONS = [
-  {
-    id: 'Rx-2024-001',
-    strain: 'Aurora 22/1',
-    brand: 'Aurora Cannabis',
-    dose: '0,5 g · 3× dziennie',
-    valid: '2026-12-31',
-    refillsLeft: 2,
-  },
-  {
-    id: 'Rx-2024-002',
-    strain: 'Spectrum Orange 10/10',
-    brand: 'Canopy Growth',
-    dose: '0,3 g · 2× dziennie',
-    valid: '2026-09-15',
-    refillsLeft: 0,
-  },
+  { id: 'Rx-2024-001', strain: 'Aurora 22/1',          brand: 'Aurora Cannabis', dose: '0,5 g · 3× dziennie', valid: '2026-12-31', refillsLeft: 2 },
+  { id: 'Rx-2024-002', strain: 'Spectrum Orange 10/10', brand: 'Canopy Growth',   dose: '0,3 g · 2× dziennie', valid: '2026-09-15', refillsLeft: 0 },
 ]
 
-const JOURNAL: { date: string; note: string; rating: number }[] = [
-  { date: '2026-06-14', note: 'Dobre działanie przeciwbólowe, lepsza jakość snu.', rating: 4 },
-  { date: '2026-06-12', note: 'Łagodne działanie. Brak efektów ubocznych.', rating: 5 },
-  { date: '2026-06-10', note: 'Zwiększona dawka — skonsultować z lekarzem.', rating: 3 },
+const JOURNAL = [
+  { date: '2026-06-14', note: 'Dobre działanie przeciwbólowe, lepsza jakość snu.',  rating: 4 },
+  { date: '2026-06-12', note: 'Łagodne działanie. Brak efektów ubocznych.',         rating: 5 },
+  { date: '2026-06-10', note: 'Zwiększona dawka — skonsultować z lekarzem.',        rating: 3 },
 ]
-
-function RatingDots({ n }: { n: number }) {
-  return (
-    <div className="flex gap-1" aria-label={`Ocena: ${n} z 5`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span
-          key={i}
-          className={`w-2 h-2 rounded-full ${i < n ? 'bg-primary-light' : 'bg-slate-200'}`}
-          aria-hidden
-        />
-      ))}
-    </div>
-  )
-}
 
 export default function DashboardPage() {
-  const daysToExpiry = (dateStr: string) => {
-    const diff = new Date(dateStr).getTime() - Date.now()
-    return Math.ceil(diff / (1000 * 60 * 60 * 24))
-  }
-
   return (
     <div className="min-h-dvh bg-bg-medical pt-14">
 
-      {/* Page header */}
       <div className="bg-gradient-to-br from-primary to-primary-light text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <p className="text-xs font-medium text-white/50 uppercase tracking-widest mb-1">Panel Pacjenta</p>
           <h1 className="text-2xl sm:text-3xl font-bold">{PATIENT.name}</h1>
           <p className="text-sm text-white/60 mt-0.5">ID: {PATIENT.id}</p>
-
-          {/* Police Mode quick access */}
           <Link
             href="/patient/wallet"
             className="mt-5 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors min-h-[44px]"
@@ -73,13 +38,12 @@ export default function DashboardPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
-        {/* Summary cards */}
         <ScrollReveal>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
-              { label: 'Aktywne recepty', value: PRESCRIPTIONS.length, icon: FileText },
-              { label: 'Wpisy w dzienniku', value: JOURNAL.length, icon: CalendarDays },
-              { label: 'Wygasa za (dni)', value: daysToExpiry(PRESCRIPTIONS[0].valid), icon: Clock },
+              { label: 'Aktywne recepty',   value: PRESCRIPTIONS.length,                    icon: FileText },
+              { label: 'Wpisy w dzienniku', value: JOURNAL.length,                          icon: CalendarDays },
+              { label: 'Wygasa za (dni)',   value: daysUntil(PRESCRIPTIONS[0].valid),       icon: Clock },
             ].map(({ label, value, icon: Icon }) => (
               <div key={label} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5 space-y-2">
                 <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center">
@@ -92,13 +56,12 @@ export default function DashboardPage() {
           </div>
         </ScrollReveal>
 
-        {/* Prescriptions */}
-        <ScrollReveal delay={60}>
+        <ScrollReveal>
           <section className="space-y-4">
             <h2 className="text-base font-semibold text-text-main">Aktywne recepty</h2>
             <ul className="space-y-3">
               {PRESCRIPTIONS.map((rx) => {
-                const days = daysToExpiry(rx.valid)
+                const days = daysUntil(rx.valid)
                 const expirySoon = days < 30
                 return (
                   <li key={rx.id} className="bg-surface rounded-2xl border border-border-muted p-4 sm:p-5">
@@ -137,8 +100,7 @@ export default function DashboardPage() {
           </section>
         </ScrollReveal>
 
-        {/* Journal */}
-        <ScrollReveal delay={120}>
+        <ScrollReveal>
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-semibold text-text-main">Dziennik terapii</h2>
@@ -151,13 +113,16 @@ export default function DashboardPage() {
                     <span className="text-xs font-medium text-slate-400">
                       {new Date(entry.date).toLocaleDateString('pl-PL', { weekday: 'short', day: 'numeric', month: 'short' })}
                     </span>
-                    <RatingDots n={entry.rating} />
+                    <div className="flex gap-1" aria-label={`Ocena: ${entry.rating} z 5`}>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <span key={i} className={`w-2 h-2 rounded-full ${i < entry.rating ? 'bg-primary-light' : 'bg-slate-200'}`} aria-hidden />
+                      ))}
+                    </div>
                   </div>
                   <p className="text-sm text-text-main leading-relaxed">{entry.note}</p>
                 </li>
               ))}
             </ul>
-
             <div className="bg-slate-50 rounded-2xl border border-dashed border-border-muted p-6 text-center space-y-2">
               <FileText size={24} className="text-slate-300 mx-auto" />
               <p className="text-sm font-medium text-slate-500">Dodawanie wpisów dostępne w Fazie 2</p>
