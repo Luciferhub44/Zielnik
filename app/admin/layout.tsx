@@ -1,83 +1,88 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Leaf, LayoutDashboard, Building2, Package, Users, ArrowLeft } from 'lucide-react'
+import { Leaf, ArrowLeft, AlertTriangle } from 'lucide-react'
+import SidebarNav, { BottomNav } from './sidebar-nav'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await currentUser()
   const role = user?.publicMetadata?.role as string | undefined
-
   if (!role || !['admin', 'pharmacy_admin'].includes(role)) redirect('/')
 
   const isAppAdmin = role === 'admin'
-
-  const NAV = isAppAdmin
-    ? [
-        { href: '/admin',             icon: LayoutDashboard, label: 'Przegląd'     },
-        { href: '/admin/pharmacies',  icon: Building2,       label: 'Apteki'       },
-        { href: '/admin/inventory',   icon: Package,         label: 'Zapasy'       },
-        { href: '/admin/users',       icon: Users,           label: 'Użytkownicy'  },
-      ]
-    : [
-        { href: '/admin',            icon: LayoutDashboard, label: 'Przegląd'     },
-        { href: '/admin/inventory',  icon: Package,         label: 'Moje zapasy'  },
-      ]
+  const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY
 
   return (
-    <div className="min-h-dvh bg-slate-50">
-      {/* Admin top bar */}
-      <header className="fixed top-0 inset-x-0 z-50 bg-primary shadow-lg h-14 flex items-center gap-3 px-4 sm:px-6">
-        <Link href="/admin" className="flex items-center gap-2 shrink-0">
-          <Leaf size={18} className="text-green-300" />
-          <span className="font-bold text-white text-sm">Zielnik</span>
-          <span className="hidden sm:block text-[10px] font-semibold bg-green-500/30 text-green-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
-            {isAppAdmin ? 'Admin' : 'Apteka'}
-          </span>
-        </Link>
+    <div className="min-h-dvh bg-[#F8FAF9] flex">
 
-        {/* Desktop nav links */}
-        <nav className="hidden sm:flex items-center gap-0.5 ml-2">
-          {NAV.map(({ href, icon: Icon, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors"
-            >
-              <Icon size={14} />
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="ml-auto flex items-center gap-3 shrink-0">
-          <span className="hidden sm:block text-xs text-white/40 truncate max-w-[160px]">
-            {user?.emailAddresses[0]?.emailAddress}
-          </span>
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={13} />
-            <span className="hidden sm:block">Aplikacja</span>
+      {/* ── Desktop Sidebar ── */}
+      <aside className="hidden sm:flex flex-col fixed inset-y-0 left-0 w-56 bg-[#0b1f13] z-40 shadow-xl">
+        {/* Logo */}
+        <div className="px-5 pt-6 pb-5 border-b border-white/8 shrink-0">
+          <Link href="/admin" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-green-500/15 flex items-center justify-center">
+              <Leaf size={15} className="text-green-400" />
+            </div>
+            <div>
+              <p className="text-white font-bold text-sm leading-none">Zielnik</p>
+              <p className="text-green-400/60 text-[10px] font-semibold tracking-widest uppercase mt-0.5">
+                {isAppAdmin ? 'App Admin' : 'Apteka'}
+              </p>
+            </div>
           </Link>
         </div>
+
+        <SidebarNav role={role} />
+
+        {/* Sidebar footer */}
+        <div className="px-4 py-4 border-t border-white/8 shrink-0 space-y-2">
+          <p className="text-[11px] text-white/25 truncate">{user?.emailAddresses[0]?.emailAddress}</p>
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/80 transition-colors"
+          >
+            <ArrowLeft size={12} />
+            Wróć do aplikacji
+          </Link>
+        </div>
+      </aside>
+
+      {/* ── Mobile Top Bar ── */}
+      <header className="sm:hidden fixed top-0 inset-x-0 z-50 bg-[#0b1f13] h-14 flex items-center justify-between px-4 shadow-lg shrink-0">
+        <Link href="/admin" className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-green-500/15 flex items-center justify-center">
+            <Leaf size={13} className="text-green-400" />
+          </div>
+          <span className="text-white font-bold text-sm">Zielnik Admin</span>
+        </Link>
+        <Link href="/" className="flex items-center gap-1 text-xs text-white/40 hover:text-white transition-colors">
+          <ArrowLeft size={13} />
+          App
+        </Link>
       </header>
 
-      {/* Mobile bottom nav */}
-      <nav className="sm:hidden fixed bottom-0 inset-x-0 z-50 bg-primary border-t border-white/10 flex">
-        {NAV.map(({ href, icon: Icon, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex-1 flex flex-col items-center gap-0.5 py-3 text-white/60 hover:text-white transition-colors"
-          >
-            <Icon size={18} />
-            <span className="text-[9px] font-medium">{label}</span>
-          </Link>
-        ))}
-      </nav>
+      {/* ── Main content ── */}
+      <div className="flex-1 sm:pl-56 flex flex-col min-h-dvh">
+        {!hasServiceKey && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 sm:px-6 py-2.5 flex items-center gap-2.5 shrink-0">
+            <AlertTriangle size={14} className="text-amber-600 shrink-0" />
+            <p className="text-xs text-amber-800 leading-snug">
+              <strong>Tryb tylko do odczytu.</strong>{' '}
+              Dodaj{' '}
+              <code className="font-mono bg-amber-100 px-1 rounded text-amber-900">SUPABASE_SERVICE_ROLE_KEY</code>{' '}
+              do <code className="font-mono bg-amber-100 px-1 rounded text-amber-900">.env.local</code>{' '}
+              aby odblokować dodawanie i edycję danych.
+            </p>
+          </div>
+        )}
 
-      <main className="pt-14 pb-20 sm:pb-0">{children}</main>
+        <main className="flex-1 pt-14 sm:pt-0 pb-20 sm:pb-0">
+          {children}
+        </main>
+      </div>
+
+      {/* ── Mobile Bottom Nav ── */}
+      <BottomNav role={role} />
     </div>
   )
 }

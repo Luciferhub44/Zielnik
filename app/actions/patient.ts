@@ -2,14 +2,14 @@
 
 import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
-import { createServerClient } from '@/lib/supabase-server'
+import { createAdminClient } from '@/lib/supabase-server'
 
 type ActionState = { success?: boolean; error?: string } | null
 
 export async function upsertDocument(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const { userId } = await auth()
   if (!userId) return { error: 'Brak autoryzacji' }
-  const db = await createServerClient()
+  const db = createAdminClient()
   const { error } = await db.from('patient_documents').upsert(
     {
       user_id: userId,
@@ -26,7 +26,7 @@ export async function upsertDocument(prevState: ActionState, formData: FormData)
 export async function addPrescription(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const { userId } = await auth()
   if (!userId) return { error: 'Brak autoryzacji' }
-  const db = await createServerClient()
+  const db = createAdminClient()
   const { error } = await db.from('prescriptions').insert({
     user_id: userId,
     strain_name: String(formData.get('strain_name')).trim(),
@@ -44,7 +44,7 @@ export async function addPrescription(prevState: ActionState, formData: FormData
 export async function deletePrescription(id: string): Promise<ActionState> {
   const { userId } = await auth()
   if (!userId) return { error: 'Brak autoryzacji' }
-  const db = await createServerClient()
+  const db = createAdminClient()
   const { error } = await db.from('prescriptions').delete().eq('id', id).eq('user_id', userId)
   if (error) return { error: error.message }
   revalidatePath('/patient/wallet')
