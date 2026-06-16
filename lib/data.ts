@@ -19,82 +19,13 @@ export type Strain = {
   inStock: boolean
 }
 
-export const strains: Strain[] = [
-  {
-    id: '1',
-    name: 'Aurora 22/1',
-    brand: 'Aurora Cannabis',
-    type: 'Sativa',
-    thc: 22,
-    cbd: 1,
-    pharmacy: 'Apteka Centrum',
-    city: 'Warszawa',
-    voivodeship: 'mazowieckie',
-    address: 'ul. Marszałkowska 45',
-    pricePerGram: 58,
-    expiryDate: '2026-07-10',
-    inStock: true,
-  },
-  {
-    id: '2',
-    name: 'Canopy Growth 20/1',
-    brand: 'Canopy Growth',
-    type: 'Indica',
-    thc: 20,
-    cbd: 1,
-    pharmacy: 'Apteka Pod Różą',
-    city: 'Kraków',
-    voivodeship: 'małopolskie',
-    address: 'ul. Floriańska 12',
-    pricePerGram: 54,
-    expiryDate: '2026-09-01',
-    inStock: true,
-  },
-  {
-    id: '3',
-    name: 'Tilray 18/1',
-    brand: 'Tilray',
-    type: 'Hybrid',
-    thc: 18,
-    cbd: 1,
-    pharmacy: 'Apteka Zdrowie',
-    city: 'Gdańsk',
-    voivodeship: 'pomorskie',
-    address: 'ul. Długa 88',
-    pricePerGram: 49,
-    expiryDate: '2026-07-20',
-    inStock: true,
-  },
-  {
-    id: '4',
-    name: 'Bedrocan 22/0',
-    brand: 'Bedrocan',
-    type: 'Sativa',
-    thc: 22,
-    cbd: 0,
-    pharmacy: 'Apteka Centrum',
-    city: 'Warszawa',
-    voivodeship: 'mazowieckie',
-    address: 'ul. Marszałkowska 45',
-    pricePerGram: 62,
-    expiryDate: '2026-10-15',
-    inStock: false,
-  },
-  {
-    id: '5',
-    name: 'Spectrum Orange 10/10',
-    brand: 'Canopy Growth',
-    type: 'Hybrid',
-    thc: 10,
-    cbd: 10,
-    pharmacy: 'Apteka Pod Różą',
-    city: 'Kraków',
-    voivodeship: 'małopolskie',
-    address: 'ul. Floriańska 12',
-    pricePerGram: 46,
-    expiryDate: '2026-12-01',
-    inStock: true,
-  },
+// ponytail: mock fallback until Supabase schema is live
+const MOCK_STRAINS: Strain[] = [
+  { id: '1', name: 'Aurora 22/1',          brand: 'Aurora Cannabis', type: 'Sativa',  thc: 22, cbd: 1,  pharmacy: 'Apteka Centrum',  city: 'Warszawa', voivodeship: 'mazowieckie', address: 'ul. Marszałkowska 45', pricePerGram: 58, expiryDate: '2026-07-10', inStock: true },
+  { id: '2', name: 'Canopy Growth 20/1',   brand: 'Canopy Growth',   type: 'Indica',  thc: 20, cbd: 1,  pharmacy: 'Apteka Pod Różą', city: 'Kraków',   voivodeship: 'małopolskie',  address: 'ul. Floriańska 12',   pricePerGram: 54, expiryDate: '2026-09-01', inStock: true },
+  { id: '3', name: 'Tilray 18/1',          brand: 'Tilray',          type: 'Hybrid',  thc: 18, cbd: 1,  pharmacy: 'Apteka Zdrowie',  city: 'Gdańsk',   voivodeship: 'pomorskie',    address: 'ul. Długa 88',        pricePerGram: 49, expiryDate: '2026-07-20', inStock: true },
+  { id: '4', name: 'Bedrocan 22/0',        brand: 'Bedrocan',        type: 'Sativa',  thc: 22, cbd: 0,  pharmacy: 'Apteka Centrum',  city: 'Warszawa', voivodeship: 'mazowieckie', address: 'ul. Marszałkowska 45', pricePerGram: 62, expiryDate: '2026-10-15', inStock: false },
+  { id: '5', name: 'Spectrum Orange 10/10',brand: 'Canopy Growth',   type: 'Hybrid',  thc: 10, cbd: 10, pharmacy: 'Apteka Pod Różą', city: 'Kraków',   voivodeship: 'małopolskie',  address: 'ul. Floriańska 12',   pricePerGram: 46, expiryDate: '2026-12-01', inStock: true },
 ]
 
 export function filterStrains(strains: Strain[], query: string, filter: FilterType): Strain[] {
@@ -121,13 +52,16 @@ export function isNearExpiry(dateStr: string): boolean {
   return diff > 0 && diff < 30 * 24 * 60 * 60 * 1000
 }
 
-const LINEAGE_MAP: Record<string, Strain['type']> = {
+export function daysUntil(dateStr: string): number {
+  return Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86_400_000)
+}
+
+const LINEAGE: Record<string, Strain['type']> = {
   'Sativa-dominant': 'Sativa',
   'Indica-dominant': 'Indica',
   'Balanced': 'Hybrid',
 }
 
-// Fetch live inventory from Supabase, falls back to mock strains if unconfigured.
 export async function fetchStrains(client: SupabaseClient<Database>): Promise<Strain[]> {
   const { data, error } = await client
     .from('inventory')
@@ -141,13 +75,13 @@ export async function fetchStrains(client: SupabaseClient<Database>): Promise<St
     `)
     .order('updated_at', { ascending: false })
 
-  if (error || !data?.length) return strains // ponytail: mock fallback until schema is live
+  if (error || !data?.length) return MOCK_STRAINS
 
   return data.map((row: any) => ({
     id: row.id,
     name: row.strains.name,
     brand: row.strains.producer,
-    type: LINEAGE_MAP[row.strains.lineage] ?? 'Hybrid',
+    type: LINEAGE[row.strains.lineage] ?? 'Hybrid',
     thc: row.strains.thc_pct,
     cbd: row.strains.cbd_pct,
     pharmacy: row.pharmacies.name,
