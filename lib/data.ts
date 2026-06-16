@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
 
 export type FilterType = 'all' | 'Sativa' | 'Indica' | 'Hybrid' | 'high-thc' | 'balanced'
 
@@ -127,7 +128,7 @@ const LINEAGE_MAP: Record<string, Strain['type']> = {
 }
 
 // Fetch live inventory from Supabase, falls back to mock strains if unconfigured.
-export async function fetchStrains(client: SupabaseClient): Promise<Strain[]> {
+export async function fetchStrains(client: SupabaseClient<Database>): Promise<Strain[]> {
   const { data, error } = await client
     .from('inventory')
     .select(`

@@ -22,7 +22,13 @@
       "Bash(brew install *)",
       "Bash(find /usr/local/bin /opt/homebrew/bin ~/.local/bin -name \"gh\" 2>/dev/null | head -3)",
       "Bash(git checkout *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__list_migrations",
+      "mcp__supabase__apply_migration",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__generate_typescript_types",
+      "mcp__supabase__get_advisors"
     ]
   },
   "enabledMcpjsonServers": [
