@@ -1,3 +1,6 @@
+import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
+
 export type FilterType = 'all' | 'Sativa' | 'Indica' | 'Hybrid' | 'high-thc' | 'balanced'
 
 export type Strain = {
@@ -116,4 +119,43 @@ export function filterStrains(strains: Strain[], query: string, filter: FilterTy
 export function isNearExpiry(dateStr: string): boolean {
   const diff = new Date(dateStr).getTime() - Date.now()
   return diff > 0 && diff < 30 * 24 * 60 * 60 * 1000
+}
+
+const LINEAGE_MAP: Record<string, Strain['type']> = {
+  'Sativa-dominant': 'Sativa',
+  'Indica-dominant': 'Indica',
+  'Balanced': 'Hybrid',
+}
+
+// Fetch live inventory from Supabase, falls back to mock strains if unconfigured.
+export async function fetchStrains(client: SupabaseClient<Database>): Promise<Strain[]> {
+  const { data, error } = await client
+    .from('inventory')
+    .select(`
+      id,
+      stock_level,
+      price_per_gram,
+      expiry_date,
+      strains ( id, name, producer, thc_pct, cbd_pct, lineage ),
+      pharmacies ( name, city, voivodeship, address )
+    `)
+    .order('updated_at', { ascending: false })
+
+  if (error || !data?.length) return strains // ponytail: mock fallback until schema is live
+
+  return data.map((row: any) => ({
+    id: row.id,
+    name: row.strains.name,
+    brand: row.strains.producer,
+    type: LINEAGE_MAP[row.strains.lineage] ?? 'Hybrid',
+    thc: row.strains.thc_pct,
+    cbd: row.strains.cbd_pct,
+    pharmacy: row.pharmacies.name,
+    city: row.pharmacies.city,
+    voivodeship: row.pharmacies.voivodeship,
+    address: row.pharmacies.address,
+    pricePerGram: row.price_per_gram,
+    expiryDate: row.expiry_date,
+    inStock: row.stock_level > 0,
+  }))
 }

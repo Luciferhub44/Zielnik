@@ -1,16 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import SearchBar from '@/app/components/search-bar'
 import InventoryList from '@/app/components/inventory-list'
-import { strains, filterStrains, type FilterType } from '@/lib/data'
+import { supabase } from '@/lib/supabase'
+import { fetchStrains, filterStrains, type Strain, type FilterType } from '@/lib/data'
 
 export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<FilterType>('all')
+  const [allStrains, setAllStrains] = useState<Strain[]>([])
 
-  const results = filterStrains(strains, query, filter)
+  useEffect(() => {
+    fetchStrains(supabase).then(setAllStrains)
+
+    // Realtime: refresh when any inventory row changes
+    const channel = supabase
+      .channel('inventory-changes')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'inventory' }, () => {
+        fetchStrains(supabase).then(setAllStrains)
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [])
+
+  const results = filterStrains(allStrains, query, filter)
 
   return (
     <div className="min-h-dvh bg-bg-medical pt-14">
@@ -30,7 +46,7 @@ export default function SearchPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">Wyszukaj preparat</h1>
             <p className="text-sm text-white/60 mt-0.5">
-              {results.length} {results.length === 1 ? 'wynik' : 'wyników'} · dane demonstracyjne
+              {results.length} {results.length === 1 ? 'wynik' : 'wyników'} · dane na żywo
             </p>
           </div>
         </div>
