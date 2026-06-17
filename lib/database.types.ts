@@ -44,9 +44,9 @@ export type Database = {
         Relationships: []
       }
       strains: {
-        Row:    { cbd_pct: number; created_at: string; dominant_terpenes: string[] | null; id: string; lineage: string | null; name: string; producer: string; thc_pct: number }
-        Insert: { cbd_pct: number; created_at?: string; dominant_terpenes?: string[] | null; id?: string; lineage?: string | null; name: string; producer: string; thc_pct: number }
-        Update: { cbd_pct?: number; created_at?: string; dominant_terpenes?: string[] | null; id?: string; lineage?: string | null; name?: string; producer?: string; thc_pct?: number }
+        Row:    { cbd_pct: number; created_at: string; dominant_terpenes: string[] | null; id: string; image_url: string | null; lineage: string | null; name: string; producer: string; thc_pct: number }
+        Insert: { cbd_pct: number; created_at?: string; dominant_terpenes?: string[] | null; id?: string; image_url?: string | null; lineage?: string | null; name: string; producer: string; thc_pct: number }
+        Update: { cbd_pct?: number; created_at?: string; dominant_terpenes?: string[] | null; id?: string; image_url?: string | null; lineage?: string | null; name?: string; producer?: string; thc_pct?: number }
         Relationships: []
       }
     }

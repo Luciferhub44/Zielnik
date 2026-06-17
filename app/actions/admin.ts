@@ -126,13 +126,63 @@ export async function addStrain(prevState: ActionState, formData: FormData): Pro
     const { role } = await requireAdmin()
     if (role !== 'admin') return { error: 'Tylko główny admin może dodawać szczepy' }
     const db = createAdminClient()
+
+    let image_url: string | null = null
+    const file = formData.get('image')
+    if (file instanceof File && file.size > 0) {
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `${crypto.randomUUID()}.${ext}`
+      const { error: uploadError } = await db.storage
+        .from('strain-images')
+        .upload(path, file, { contentType: file.type, upsert: false })
+      if (uploadError) return { error: uploadError.message }
+      const { data: { publicUrl } } = db.storage.from('strain-images').getPublicUrl(path)
+      image_url = publicUrl
+    }
+
     const { error } = await db.from('strains').insert({
-      name:     String(formData.get('name')).trim(),
-      producer: String(formData.get('producer')).trim(),
-      thc_pct:  Number(formData.get('thc_pct')),
-      cbd_pct:  Number(formData.get('cbd_pct')),
-      lineage:  String(formData.get('lineage') || '').trim() || null,
+      name:      String(formData.get('name')).trim(),
+      producer:  String(formData.get('producer')).trim(),
+      thc_pct:   Number(formData.get('thc_pct')),
+      cbd_pct:   Number(formData.get('cbd_pct')),
+      lineage:   String(formData.get('lineage') || '').trim() || null,
+      image_url,
     })
+    if (error) return { error: error.message }
+    revalidatePath('/admin/strains')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function updateStrain(id: string, prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może edytować szczepy' }
+    const db = createAdminClient()
+
+    let image_url: string | null = String(formData.get('existing_image_url') || '') || null
+    const file = formData.get('image')
+    if (file instanceof File && file.size > 0) {
+      const ext = file.name.split('.').pop() ?? 'jpg'
+      const path = `${crypto.randomUUID()}.${ext}`
+      const { error: uploadError } = await db.storage
+        .from('strain-images')
+        .upload(path, file, { contentType: file.type, upsert: false })
+      if (uploadError) return { error: uploadError.message }
+      const { data: { publicUrl } } = db.storage.from('strain-images').getPublicUrl(path)
+      image_url = publicUrl
+    }
+
+    const { error } = await db.from('strains').update({
+      name:      String(formData.get('name')).trim(),
+      producer:  String(formData.get('producer')).trim(),
+      thc_pct:   Number(formData.get('thc_pct')),
+      cbd_pct:   Number(formData.get('cbd_pct')),
+      lineage:   String(formData.get('lineage') || '').trim() || null,
+      image_url,
+    }).eq('id', id)
     if (error) return { error: error.message }
     revalidatePath('/admin/strains')
     return { success: true }
