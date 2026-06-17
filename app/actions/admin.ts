@@ -26,6 +26,9 @@ export async function addPharmacy(prevState: ActionState, formData: FormData): P
       voivodeship: String(formData.get('voivodeship')).trim(),
       latitude: Number(formData.get('latitude') || 0),
       longitude: Number(formData.get('longitude') || 0),
+      phone:   String(formData.get('phone')   || '').trim() || null,
+      email:   String(formData.get('email')   || '').trim() || null,
+      website: String(formData.get('website') || '').trim() || null,
     })
     if (error) return { error: error.message }
     revalidatePath('/admin/pharmacies')
@@ -41,10 +44,9 @@ export async function updateInventoryStock(id: string, stockLevel: number): Prom
     const { role, user } = await requireAdmin()
     const db = createAdminClient()
     let query = db.from('inventory').update({ stock_level: stockLevel, updated_at: new Date().toISOString() }).eq('id', id)
-    // pharmacy_admin can only touch their own pharmacy's inventory
     if (role === 'pharmacy_admin') {
       const pharmacyId = user?.publicMetadata?.pharmacy_id as string | undefined
-      if (pharmacyId) query = db.from('inventory').update({ stock_level: stockLevel, updated_at: new Date().toISOString() }).eq('id', id).eq('pharmacy_id', pharmacyId)
+      if (pharmacyId) query = query.eq('pharmacy_id', pharmacyId)
     }
     const { error } = await query
     if (error) return { error: error.message }
@@ -69,6 +71,84 @@ export async function addInventoryItem(prevState: ActionState, formData: FormDat
     })
     if (error) return { error: error.message }
     revalidatePath('/admin/inventory')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function updatePharmacy(id: string, prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może edytować apteki' }
+    const db = createAdminClient()
+    const name = String(formData.get('name')).trim()
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+    const { error } = await db.from('pharmacies').update({
+      name,
+      slug,
+      address:    String(formData.get('address')    || '').trim(),
+      city:       String(formData.get('city')       || '').trim(),
+      voivodeship:String(formData.get('voivodeship')|| '').trim(),
+      latitude:   Number(formData.get('latitude')   || 0),
+      longitude:  Number(formData.get('longitude')  || 0),
+      phone:      String(formData.get('phone')      || '').trim() || null,
+      email:      String(formData.get('email')      || '').trim() || null,
+      website:    String(formData.get('website')    || '').trim() || null,
+    }).eq('id', id)
+    if (error) return { error: error.message }
+    revalidatePath(`/admin/pharmacies/${id}`)
+    revalidatePath('/admin/pharmacies')
+    revalidatePath('/admin')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function deletePharmacy(id: string): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może usuwać apteki' }
+    const db = createAdminClient()
+    const { error } = await db.from('pharmacies').delete().eq('id', id)
+    if (error) return { error: error.message }
+    revalidatePath('/admin/pharmacies')
+    revalidatePath('/admin')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function addStrain(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może dodawać szczepy' }
+    const db = createAdminClient()
+    const { error } = await db.from('strains').insert({
+      name:     String(formData.get('name')).trim(),
+      producer: String(formData.get('producer')).trim(),
+      thc_pct:  Number(formData.get('thc_pct')),
+      cbd_pct:  Number(formData.get('cbd_pct')),
+      lineage:  String(formData.get('lineage') || '').trim() || null,
+    })
+    if (error) return { error: error.message }
+    revalidatePath('/admin/strains')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function deleteStrain(id: string): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może usuwać szczepy' }
+    const db = createAdminClient()
+    const { error } = await db.from('strains').delete().eq('id', id)
+    if (error) return { error: error.message }
+    revalidatePath('/admin/strains')
     return { success: true }
   } catch (e: any) {
     return { error: e.message }

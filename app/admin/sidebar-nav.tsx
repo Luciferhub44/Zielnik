@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Building2, Package, Users } from 'lucide-react'
+import { LayoutDashboard, Building2, Package, Users, Leaf } from 'lucide-react'
 
 const ADMIN_NAV = [
   { href: '/admin',            icon: LayoutDashboard, label: 'Przegląd'    },
   { href: '/admin/pharmacies', icon: Building2,       label: 'Apteki'      },
+  { href: '/admin/strains',    icon: Leaf,            label: 'Szczepy'     },
   { href: '/admin/inventory',  icon: Package,         label: 'Zapasy'      },
   { href: '/admin/users',      icon: Users,           label: 'Użytkownicy' },
 ]

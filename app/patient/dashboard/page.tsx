@@ -27,12 +27,13 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-dvh bg-bg-medical pt-14">
 
-      {/* Hero */}
       <div className="bg-gradient-to-br from-primary to-primary-light text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <p className="text-xs font-medium text-white/50 uppercase tracking-widest mb-1">Panel Pacjenta</p>
           <h1 className="text-2xl sm:text-3xl font-bold">{name}</h1>
-          <p className="text-xs text-white/40 mt-0.5 font-mono">{user?.id}</p>
+          {user?.username && (
+            <p className="text-xs text-white/40 mt-0.5">@{user.username}</p>
+          )}
           <Link
             href="/patient/wallet"
             className="mt-5 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors min-h-[44px]"
@@ -46,7 +47,6 @@ export default async function DashboardPage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
-        {/* Stats */}
         <ScrollReveal>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
@@ -66,7 +66,6 @@ export default async function DashboardPage() {
           </div>
         </ScrollReveal>
 
-        {/* Active Prescriptions */}
         <ScrollReveal>
           <section className="space-y-4">
             <div className="flex items-center justify-between">
@@ -119,7 +118,6 @@ export default async function DashboardPage() {
           </section>
         </ScrollReveal>
 
-        {/* Expired — collapsed */}
         {rxExpired.length > 0 && (
           <ScrollReveal>
             <details className="group">
@@ -147,7 +145,6 @@ export default async function DashboardPage() {
           </ScrollReveal>
         )}
 
-        {/* Journal */}
         <ScrollReveal>
           <section className="space-y-4">
             <div className="flex items-center justify-between">

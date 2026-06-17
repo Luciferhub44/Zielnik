@@ -32,9 +32,9 @@ export type Database = {
         Relationships: []
       }
       pharmacies: {
-        Row:    { address: string; city: string; created_at: string; id: string; latitude: number; longitude: number; name: string; slug: string; updated_at: string; voivodeship: string }
-        Insert: { address: string; city: string; created_at?: string; id?: string; latitude: number; longitude: number; name: string; slug: string; updated_at?: string; voivodeship: string }
-        Update: { address?: string; city?: string; created_at?: string; id?: string; latitude?: number; longitude?: number; name?: string; slug?: string; updated_at?: string; voivodeship?: string }
+        Row:    { address: string; city: string; created_at: string; email: string | null; id: string; latitude: number; longitude: number; name: string; phone: string | null; slug: string; updated_at: string; voivodeship: string; website: string | null }
+        Insert: { address: string; city: string; created_at?: string; email?: string | null; id?: string; latitude: number; longitude: number; name: string; phone?: string | null; slug: string; updated_at?: string; voivodeship: string; website?: string | null }
+        Update: { address?: string; city?: string; created_at?: string; email?: string | null; id?: string; latitude?: number; longitude?: number; name?: string; phone?: string | null; slug?: string; updated_at?: string; voivodeship?: string; website?: string | null }
         Relationships: []
       }
       prescriptions: {
