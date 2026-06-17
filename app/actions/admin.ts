@@ -121,6 +121,40 @@ export async function deletePharmacy(id: string): Promise<ActionState> {
   }
 }
 
+export async function addStrain(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może dodawać szczepy' }
+    const db = createAdminClient()
+    const { error } = await db.from('strains').insert({
+      name:     String(formData.get('name')).trim(),
+      producer: String(formData.get('producer')).trim(),
+      thc_pct:  Number(formData.get('thc_pct')),
+      cbd_pct:  Number(formData.get('cbd_pct')),
+      lineage:  String(formData.get('lineage') || '').trim() || null,
+    })
+    if (error) return { error: error.message }
+    revalidatePath('/admin/strains')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
+export async function deleteStrain(id: string): Promise<ActionState> {
+  try {
+    const { role } = await requireAdmin()
+    if (role !== 'admin') return { error: 'Tylko główny admin może usuwać szczepy' }
+    const db = createAdminClient()
+    const { error } = await db.from('strains').delete().eq('id', id)
+    if (error) return { error: error.message }
+    revalidatePath('/admin/strains')
+    return { success: true }
+  } catch (e: any) {
+    return { error: e.message }
+  }
+}
+
 export async function grantAdminRole(prevState: ActionState, formData: FormData): Promise<ActionState> {
   try {
     const { role } = await requireAdmin()
