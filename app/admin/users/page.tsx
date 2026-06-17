@@ -5,8 +5,7 @@ import { Users, AlertCircle, CheckCircle2, ShieldCheck } from 'lucide-react'
 import { grantAdminRole } from '@/app/actions/admin'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-
-const INPUT = 'w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors bg-white'
+import { INPUT } from '@/app/admin/styles'
 
 export default function UsersPage() {
   const [state, action, pending] = useActionState(grantAdminRole, null)
@@ -44,7 +43,6 @@ export default function UsersPage() {
         <div>
           <label className="block text-xs font-medium text-slate-500 uppercase tracking-widest mb-1.5">Clerk User ID *</label>
           <input name="user_id" type="text" required placeholder="user_2abc..." className={INPUT} />
-          <p className="text-xs text-slate-400 mt-1">Znajdź w Clerk Dashboard → Users → kliknij użytkownika</p>
         </div>
 
         <div>
@@ -70,8 +68,7 @@ export default function UsersPage() {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2">
-          <p className="text-xs text-slate-400">Wymaga SUPABASE_SERVICE_ROLE_KEY</p>
+        <div className="flex justify-end pt-2">
           <button type="submit" disabled={pending}
             className="bg-primary hover:bg-primary-light disabled:opacity-50 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors min-h-[44px]">
             {pending ? 'Zapisuję…' : 'Nadaj rolę'}
@@ -79,16 +76,6 @@ export default function UsersPage() {
         </div>
       </form>
 
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-2">
-        <div className="flex items-center gap-2">
-          <Users size={16} className="text-amber-600" />
-          <p className="text-sm font-semibold text-amber-800">Ważna informacja</p>
-        </div>
-        <p className="text-xs text-amber-700 leading-relaxed">
-          Dane użytkowników (imiona, email, liczba kont) są zarządzane w{' '}
-          <strong>Clerk Dashboard → Users</strong>. Supabase przechowuje wyłącznie dane medyczne pacjentów powiązane z Clerk user_id.
-        </p>
-      </div>
     </div>
   )
 }

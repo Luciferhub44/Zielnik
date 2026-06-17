@@ -3,16 +3,10 @@
 import { useActionState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Building2, ChevronLeft, AlertCircle, CheckCircle2, Phone, Mail, Globe } from 'lucide-react'
+import { ChevronLeft, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { updatePharmacy } from '@/app/actions/admin'
 import type { Tables } from '@/lib/database.types'
-
-const INPUT = [
-  'w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800',
-  'placeholder:text-slate-400 bg-white',
-  'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60',
-  'transition-all duration-150',
-].join(' ')
+import { INPUT } from '@/app/admin/styles'
 
 function Field({ label, name, defaultValue, type = 'text', placeholder, required }: {
   label: string; name: string; defaultValue?: string | null
@@ -44,17 +38,9 @@ export default function EditPharmacyForm({ pharmacy }: { pharmacy: Tables<'pharm
         <ChevronLeft size={15} /> {pharmacy.name}
       </Link>
 
-      <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1">Edycja</p>
-        <h1 className="text-2xl font-black text-slate-800">Edytuj aptekę</h1>
-      </div>
+      <h1 className="text-2xl font-black text-slate-800">Edytuj aptekę</h1>
 
       <form action={formAction} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
-          <Building2 size={16} className="text-primary" />
-          <h2 className="text-sm font-bold text-slate-700">Dane podstawowe</h2>
-        </div>
-
         <div className="px-6 py-5 space-y-4">
           {state?.error && (
             <div className="flex items-start gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -81,10 +67,6 @@ export default function EditPharmacyForm({ pharmacy }: { pharmacy: Tables<'pharm
           </div>
 
           <div className="border-t border-slate-100 pt-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Phone size={13} className="text-slate-400" />
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Kontakt</p>
-            </div>
             <div className="grid sm:grid-cols-3 gap-4">
               <Field label="Telefon"    name="phone"   type="tel"  defaultValue={pharmacy.phone}   placeholder="+48 123 456 789" />
               <Field label="E-mail"     name="email"   type="email" defaultValue={pharmacy.email}   placeholder="apteka@example.pl" />

@@ -6,13 +6,7 @@ import { Building2, MapPin, Plus, X, AlertCircle, CheckCircle2, ChevronDown, Che
 import { useUser } from '@clerk/nextjs'
 import { addPharmacy, deletePharmacy } from '@/app/actions/admin'
 import { supabase } from '@/lib/supabase'
-
-const INPUT = [
-  'w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800',
-  'placeholder:text-slate-400 bg-white',
-  'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60',
-  'transition-all duration-150',
-].join(' ')
+import { INPUT } from '@/app/admin/styles'
 
 type Pharmacy = { id: string; name: string; address: string; city: string; voivodeship: string; created_at: string }
 
@@ -147,8 +141,7 @@ export default function PharmaciesPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-1">
-              <p className="text-xs text-slate-400">* Pola wymagane · wymaga SUPABASE_SERVICE_ROLE_KEY</p>
+            <div className="flex justify-end pt-1">
               <button type="submit" disabled={pending}
                 className="bg-primary hover:bg-primary-light disabled:opacity-50 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors shadow-sm min-h-[44px]">
                 {pending ? 'Dodaję…' : 'Dodaj aptekę'}

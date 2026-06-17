@@ -1,7 +1,7 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { Leaf, ArrowLeft, AlertTriangle } from 'lucide-react'
+import { Leaf, ArrowLeft } from 'lucide-react'
 import SidebarNav, { BottomNav } from './sidebar-nav'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -10,8 +10,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!role || !['admin', 'pharmacy_admin'].includes(role)) redirect('/')
 
   const isAppAdmin = role === 'admin'
-  const hasServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY
-
   return (
     <div className="min-h-dvh bg-[#F8FAF9] flex">
 
@@ -58,19 +56,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </header>
 
       <div className="flex-1 sm:pl-56 flex flex-col min-h-dvh">
-        {!hasServiceKey && (
-          <div className="bg-amber-50 border-b border-amber-200 px-4 sm:px-6 py-2.5 flex items-center gap-2.5 shrink-0">
-            <AlertTriangle size={14} className="text-amber-600 shrink-0" />
-            <p className="text-xs text-amber-800 leading-snug">
-              <strong>Tryb tylko do odczytu.</strong>{' '}
-              Dodaj{' '}
-              <code className="font-mono bg-amber-100 px-1 rounded text-amber-900">SUPABASE_SERVICE_ROLE_KEY</code>{' '}
-              do <code className="font-mono bg-amber-100 px-1 rounded text-amber-900">.env.local</code>{' '}
-              aby odblokować dodawanie i edycję danych.
-            </p>
-          </div>
-        )}
-
         <main className="flex-1 pt-14 sm:pt-0 pb-20 sm:pb-0">
           {children}
         </main>

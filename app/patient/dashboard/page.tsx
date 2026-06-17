@@ -31,7 +31,9 @@ export default async function DashboardPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <p className="text-xs font-medium text-white/50 uppercase tracking-widest mb-1">Panel Pacjenta</p>
           <h1 className="text-2xl sm:text-3xl font-bold">{name}</h1>
-          <p className="text-xs text-white/40 mt-0.5 font-mono">{user?.id}</p>
+          {user?.username && (
+            <p className="text-xs text-white/40 mt-0.5">@{user.username}</p>
+          )}
           <Link
             href="/patient/wallet"
             className="mt-5 inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors min-h-[44px]"

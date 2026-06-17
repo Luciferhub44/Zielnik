@@ -7,13 +7,7 @@ import {
 } from 'lucide-react'
 import { updateInventoryStock, addInventoryItem } from '@/app/actions/admin'
 import { supabase } from '@/lib/supabase'
-
-const INPUT = [
-  'w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800',
-  'placeholder:text-slate-400 bg-white',
-  'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/60',
-  'transition-all duration-150',
-].join(' ')
+import { INPUT } from '@/app/admin/styles'
 
 type Item = {
   id: string
@@ -156,8 +150,7 @@ export default function InventoryPage() {
                 <input name="batch_number" type="text" placeholder="LOT-2025-001" className={INPUT} />
               </div>
             </div>
-            <div className="flex items-center justify-between pt-1">
-              <p className="text-xs text-slate-400">* Wymaga SUPABASE_SERVICE_ROLE_KEY</p>
+            <div className="flex justify-end pt-1">
               <button type="submit" disabled={addPending}
                 className="bg-primary hover:bg-primary-light disabled:opacity-50 text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition-colors shadow-sm min-h-[44px]">
                 {addPending ? 'Dodaję…' : 'Dodaj pozycję'}
